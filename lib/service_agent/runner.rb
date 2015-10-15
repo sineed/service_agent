@@ -30,14 +30,6 @@ module ServiceAgent
     end
 
     def single_ping
-      if ping_frequency.nil?
-        notification_services.disaster
-        exit
-      end
-
-      index = ping_frequencies.index(ping_frequency)
-      sleep calculate_delay(index)
-
       response_code = get_response_code
       if response_code == RESPONSE_STATUS
         unless failed
@@ -49,9 +41,16 @@ module ServiceAgent
         end
       else
         @failed = true
-        @ping_frequency = ping_frequencies[index + 1]
-        notification_services.failed(response_code)
+        @ping_frequency = ping_frequencies[ping_frequencies.index(ping_frequency) + 1]
+        if ping_frequency.nil?
+          notification_services.disaster
+          exit
+        else
+          notification_services.failed(response_code)
+        end
       end
+
+      sleep calculate_delay
     end
 
     def ping_frequencies
@@ -74,7 +73,8 @@ module ServiceAgent
       request.perform.response_code
     end
 
-    def calculate_delay(index)
+    def calculate_delay
+      index = ping_frequencies.index(ping_frequency)
       prev_frequency = if index == 0
         0
       else
