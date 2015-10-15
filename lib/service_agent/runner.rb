@@ -1,5 +1,3 @@
-require "net/http"
-
 require "service_agent/util"
 require "service_agent/request"
 require "service_agent/notification_services"
@@ -37,7 +35,8 @@ module ServiceAgent
         exit
       end
 
-      sleep calculate_delay
+      index = ping_frequencies.index(ping_frequency)
+      sleep calculate_delay(index)
 
       response_code = get_response_code
       if response_code == RESPONSE_STATUS
@@ -50,7 +49,7 @@ module ServiceAgent
         end
       else
         @failed = true
-        @ping_frequency = ping_frequencies[ping_frequency_index + 1]
+        @ping_frequency = ping_frequencies[index + 1]
         notification_services.failed(response_code)
       end
     end
@@ -75,8 +74,7 @@ module ServiceAgent
       request.perform.response_code
     end
 
-    def calculate_delay
-      index = ping_frequency_index
+    def calculate_delay(index)
       prev_frequency = if index == 0
         0
       else
@@ -84,10 +82,6 @@ module ServiceAgent
       end
 
       ping_frequency - prev_frequency
-    end
-
-    def ping_frequency_index
-      ping_frequencies.index(ping_frequency)
     end
   end
 end

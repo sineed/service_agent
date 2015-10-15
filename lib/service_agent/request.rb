@@ -1,3 +1,5 @@
+require "net/http"
+
 module ServiceAgent
   class Request
     attr_reader :url, :response_code

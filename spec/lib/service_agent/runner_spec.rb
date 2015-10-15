@@ -54,6 +54,7 @@ RSpec.describe ServiceAgent::Runner do
       expect(subject.notification_services).to receive(:failed)
       subject.single_ping
 
+
       # ... it is really dead
       expect(subject.notification_services).to receive(:disaster)
       expect { subject.single_ping }.to raise_error(SystemExit)
