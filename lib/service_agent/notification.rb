@@ -1,0 +1,5 @@
+require "service_agent/notification/deliverable"
+require "service_agent/notification/message"
+require "service_agent/notification/stdout"
+require "service_agent/notification/email"
+require "service_agent/notification/phone"
