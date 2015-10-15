@@ -1,3 +1,4 @@
+require "thor"
 require "service_agent/runner"
 
 module ServiceAgent
