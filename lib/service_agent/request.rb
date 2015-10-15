@@ -9,21 +9,13 @@ module ServiceAgent
     end
 
     def perform
-      @response_code = begin
-        Net::HTTP.start(url.host, url.port) do |http|
-          head = http.head(url.request_uri)
-          head.code
-        end
-      rescue
-         "Connection refused"
-      end
-
+      @response_code = Net::HTTP.get_response(url).code rescue "Connection refused"
       self
     end
 
     private
     def normalized_url(url)
-      url = "http://#{url}" unless url.start_with?("http://")
+      url = "http://#{url}" unless url.match(/http(s)?:\/\//)
       URI(url)
     end
   end
